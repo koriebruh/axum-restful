@@ -1,3 +1,6 @@
+use sqlx::mysql::MySqlPool;
+use thiserror::Error;
+
 #[derive(Debug, Error)]
 pub enum ErrCustom {
     #[error("Invalid credentials")]

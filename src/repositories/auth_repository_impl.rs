@@ -15,17 +15,18 @@ impl AuthRepositoryImpl {
         Self { db }
     }
 }
+#[async_trait::async_trait]
 impl AuthRepository for AuthRepositoryImpl {
     async fn create_user(&self, user: User) -> Result<bool, ErrCustom> {
         let hashed_pass = hash_password(user.password.as_str())?;
 
-        let execute = sqlx::query!(
+        let execute = sqlx::query(
             "INSERT INTO users (username, password, email, created_at) VALUES (?,?,?,?)",
-            user.username,
-            hashed_pass,
-            user.email,
-            user.created_at
-        ).execute(&self.db).await;
+        ).bind(user.username)
+            .bind(hashed_pass)
+            .bind(user.email)
+            .bind(user.created_at)
+            .execute(&self.db).await;
 
         match execute {
             Ok(_) => Ok(true),
@@ -48,33 +49,33 @@ impl AuthRepository for AuthRepositoryImpl {
     // ? maksud nya Jika hasilnya adalah Err(E) (untuk Result) atau None (untuk Option),
     // maka fungsi akan mengembalikan error tersebut (atau None)
     async fn login(&self, user: User) -> Result<bool, ErrCustom> {
-        let execute = sqlx::query!(
-            "SELECT username, password FROM users WHERE username = ?",user.username
-        ).fetch_optional(&self.db).await?;
+        let execute = sqlx::query(
+            "SELECT username, password FROM users WHERE username = ?"
+        ).bind(user.username)
+            .fetch_optional(&self.db).await?;
 
         match execute {
             Some(execute) => {
                 if let Some(stored_hash) = execute.password {
                     let valid = verify_password(user.password, &stored_hash)?;
                     Ok(valid)
+                }else {
+                    Ok(false)
                 }
             }
             None => Ok(false)
         }
     }
 
-    async fn exist_kah(&self, username: &str) -> bool {
-        let execute = sqlx::query!(
-            "SELECT EXISTS ( SELECT 1 FROM users WHERE username = ?)", username
-        ).fetch_optional(&self.db).await?;
+    async fn exist_kah(&self, username: &str) -> Result<bool, ErrCustom> {
+        // Query untuk cek apakah username ada di tabel users, kalau ada return true
+        let result = sqlx::query(
+                "SELECT 1 FROM users WHERE username = ? LIMIT 1",
+            ).bind(username)
+            .fetch_optional(&self.db)
+            .await?;
 
-        match execute {
-            Some(record) => {
-                Ok(record.exists == 1)
-            }
-            None => {
-                Ok(false)
-            }
-        }
+        // Kalau hasilnya ada, berarti username ditemukan
+        Ok(result.is_some())
     }
 }
