@@ -6,10 +6,17 @@ use crate::services::auth_service::AuthService;
 use crate::utils::errors::ErrCustom;
 use crate::repositories::auth_repository_impl::AuthRepositoryImpl;
 use crate::models::user::User;
+use std::sync::Arc;
 
 
 pub struct AuthServiceImpl {
-    repository: AuthRepositoryImpl,
+    repository: Arc<AuthRepositoryImpl>
+}
+
+impl AuthServiceImpl {
+    pub fn new(repository: Arc<AuthRepositoryImpl>) -> Self {
+        Self { repository }
+    }
 }
 
 impl AuthService for AuthServiceImpl {
@@ -33,17 +40,18 @@ impl AuthService for AuthServiceImpl {
         // MAPPING
         let new_user = User {
             id: None,
-            username: request.username,
+            username: request.username.clone(),
             password: request.password,
             email: request.email,
             created_at: Utc::now().timestamp_millis(),
             updated_at: None,
         };
 
-        match self.repository.exist_kah(&request.username).await {
-            Ok(true) => {
-                match self.repository.create_user(new_user) {
-                    Ok(_) => Ok("login user success ".to_string()),
+        match self.repository.exist_kah(request.username.as_str()).await {
+            Ok(true) => Err(ErrCustom::UsernameExists), // Jika username sudah ada, return error
+            Ok(false) => {
+                match self.repository.create_user(new_user).await { // Tambahkan `.await` di sini
+                    Ok(_) => Ok("login user success".to_string()),
                     Err(e) => Err(e),
                 }
             }

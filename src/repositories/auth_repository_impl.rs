@@ -1,4 +1,4 @@
-use sqlx::MySqlPool;
+use sqlx::{MySqlPool, Row};
 use crate::models::user::User;
 use crate::repositories::auth_repository::AuthRepository;
 use crate::utils::errors::ErrCustom;
@@ -55,11 +55,12 @@ impl AuthRepository for AuthRepositoryImpl {
             .fetch_optional(&self.db).await?;
 
         match execute {
-            Some(execute) => {
-                if let Some(stored_hash) = execute.password {
-                    let valid = verify_password(user.password, &stored_hash)?;
+            Some(row) => {
+                let stored_hash: Option<String> = row.try_get("password")?;
+                if let Some(stored_hash) = stored_hash {
+                    let valid = verify_password(user.password.as_str(), &stored_hash)?;
                     Ok(valid)
-                }else {
+                } else {
                     Ok(false)
                 }
             }
@@ -75,7 +76,6 @@ impl AuthRepository for AuthRepositoryImpl {
             .fetch_optional(&self.db)
             .await?;
 
-        // Kalau hasilnya ada, berarti username ditemukan
         Ok(result.is_some())
     }
 }
