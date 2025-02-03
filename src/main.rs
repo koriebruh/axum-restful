@@ -36,6 +36,7 @@ mod utils {
 
 #[tokio::main]
 async fn main() {
+    env_logger::init();
     let pool = match get_pool().await {
         Ok(pool) => pool,
         Err(e) => {
@@ -50,11 +51,11 @@ async fn main() {
 
     let app = Router::new()
         .route("/login", post({
-            let auth_controller = auth_controller.clone(); // ✅ Clone `Arc` untuk closure
+            let auth_controller = auth_controller.clone(); // Clone `Arc` for closure
             move |Json(request): Json<LoginRequest>| {
-                let auth_controller = auth_controller.clone(); // ✅ Clone lagi untuk `async move`
+                let auth_controller = auth_controller.clone(); // Clone again for `async move`
                 async move {
-                    auth_controller.as_ref().login(request).await // ✅ Gunakan `as_ref()` untuk mengakses method instance
+                    auth_controller.as_ref().Login(axum::Json(request)).await // Use `as_ref()` to access the method instance
                 }
             }
         }));

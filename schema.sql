@@ -23,3 +23,6 @@ SELECT EXISTS (
     FROM users
     WHERE username = 'example_username'
 );
+
+
+select * from users;

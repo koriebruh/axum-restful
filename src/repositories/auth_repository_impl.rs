@@ -4,6 +4,7 @@ use crate::repositories::auth_repository::AuthRepository;
 use crate::utils::errors::ErrCustom;
 use crate::utils::hash::hash_password;
 use crate::utils::hash::verify_password;
+use log::{info, error, debug};
 
 
 pub struct AuthRepositoryImpl {
@@ -49,6 +50,7 @@ impl AuthRepository for AuthRepositoryImpl {
     // ? maksud nya Jika hasilnya adalah Err(E) (untuk Result) atau None (untuk Option),
     // maka fungsi akan mengembalikan error tersebut (atau None)
     async fn login(&self, user: User) -> Result<bool, ErrCustom> {
+        println!("Attempting to login with username: {}", user.username.clone());
         let execute = sqlx::query(
             "SELECT username, password FROM users WHERE username = ?"
         ).bind(user.username)
@@ -56,15 +58,12 @@ impl AuthRepository for AuthRepositoryImpl {
 
         match execute {
             Some(row) => {
-                let stored_hash: Option<String> = row.try_get("password")?;
-                if let Some(stored_hash) = stored_hash {
-                    let valid = verify_password(user.password.as_str(), &stored_hash)?;
-                    Ok(valid)
-                } else {
-                    Ok(false)
-                }
+                let stored_hash: String = row.try_get("password")?;
+                let valid = verify_password(&user.password, &stored_hash)?;
+                Ok(valid)
             }
-            None => Ok(false)
+
+            None => Err(ErrCustom::InvalidCredentials),
         }
     }
 

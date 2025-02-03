@@ -7,6 +7,7 @@ use crate::utils::errors::ErrCustom;
 use crate::repositories::auth_repository_impl::AuthRepositoryImpl;
 use crate::models::user::User;
 use std::sync::Arc;
+use validator::Validate;
 
 
 pub struct AuthServiceImpl {
@@ -21,6 +22,10 @@ impl AuthServiceImpl {
 
 impl AuthService for AuthServiceImpl {
     async fn login(&self, request: LoginRequest) -> Result<String, ErrCustom> {
+        if let Err(validation_errors) = request.validate() {
+            return Err(ErrCustom::ValidationError(validation_errors.to_string()));
+        }
+
         let new_login = User {
             id: None,
             username: request.username,
@@ -31,12 +36,17 @@ impl AuthService for AuthServiceImpl {
         };
 
         match self.repository.login(new_login).await {
-            Ok(_) => Ok("login user success ".to_string()),
+            Ok(true) => Ok("login user success ".to_string()),
+            Ok(false) => Ok("fail login ".to_string()),
             Err(e) => Err(e),
         }
     }
 
     async fn register(&self, request: RegisterRequest) -> Result<String, ErrCustom> {
+        if let Err(validation_errors) = request.validate() {
+            return Err(ErrCustom::ValidationError(validation_errors.to_string()));
+        }
+
         // MAPPING
         let new_user = User {
             id: None,

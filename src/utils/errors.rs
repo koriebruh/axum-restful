@@ -18,4 +18,6 @@ pub enum ErrCustom {
     #[error("Hashing error: {0}")]
     HashError(#[from] argon2::Error),
 
+    #[error("Validation error: {0}")]
+    ValidationError(String),
 }
