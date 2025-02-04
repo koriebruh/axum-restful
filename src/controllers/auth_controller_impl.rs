@@ -1,5 +1,7 @@
 use std::sync::Arc;
 use axum::Json;
+use axum::response::{IntoResponse, Response};
+use http::StatusCode;
 use serde_json::json;
 use crate::controllers::auth_controller::AuthController;
 use crate::dto::login_request::LoginRequest;
@@ -20,28 +22,21 @@ impl AuthControllerImpl {
 }
 
 impl AuthController for AuthControllerImpl {
-    async fn Login(&self, Json(request): Json<LoginRequest>) -> Json<WebResponse> {
+    async fn Login(&self, Json(request): Json<LoginRequest>) -> Response {
         match self.service.login(request).await {
-            Ok(result) => {
-                let response = WebResponse {
+            Ok(message) => {
+                let success_response = WebResponse {
                     status: "success".to_string(),
-                    message: "Login successful".to_string(),
-                    data: Some(json!(result)),
-                };
-                Json(response)
-            },
-            Err(e) => {
-                let response = WebResponse {
-                    status: "error".to_string(),
-                    message: e.to_string(),
+                    message:"login successfully".to_string(),
                     data: None,
                 };
-                Json(response)
+                (StatusCode::OK, Json(success_response)).into_response()
             },
+            Err(err) => err.into_response(),
         }
     }
 
-    async fn Register(&self, Json(request): Json<RegisterRequest>) -> Json<WebResponse> {
+    async fn Register(&self, Json(request): Json<RegisterRequest>) -> Response {
         match self.service.register(request).await {
             Ok(result)=> {
                 let response = WebResponse {
@@ -49,20 +44,13 @@ impl AuthController for AuthControllerImpl {
                     message: "register successful".to_string(),
                     data: Some(json!(result)),
                 };
-                Json(response)
+                (StatusCode::CREATED, Json(response)).into_response()
             },
-            Err(e) => {
-                let response = WebResponse {
-                    status: "error".to_string(),
-                    message: e.to_string(),
-                    data: None,
-                };
-                Json(response)
-            },
+            Err(err) => err.into_response(),
         }
     }
 
-    async fn Logout(&self) -> Json<WebResponse> {
+    async fn Logout(&self) -> Response {
         todo!()
     }
 }
