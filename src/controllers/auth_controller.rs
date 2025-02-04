@@ -6,7 +6,7 @@ use crate::dto::login_request::LoginRequest;
 use crate::dto::register_request::RegisterRequest;
 
 pub trait AuthController {
-    async fn Login(&self, request: Json<LoginRequest>) -> Response;
-    async fn Register(&self, request: Json<RegisterRequest>) ->  Response;
-    async fn Logout(&self) ->  Response;
+    async fn login(&self, request: Json<LoginRequest>) -> Response;
+    async fn register(&self, request: Json<RegisterRequest>) ->  Response;
+    async fn logout(&self) ->  Response;
 }

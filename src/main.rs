@@ -5,7 +5,9 @@ use crate::conf::database::get_pool;
 use crate::controllers::auth_controller::AuthController;
 use crate::controllers::auth_controller_impl::AuthControllerImpl;
 use crate::dto::login_request::LoginRequest;
+use crate::dto::register_request::RegisterRequest;
 use crate::repositories::auth_repository_impl::AuthRepositoryImpl;
+use crate::services::auth_service::AuthService;
 use crate::services::auth_service_impl::AuthServiceImpl;
 
 mod conf { pub mod database; }
@@ -51,15 +53,22 @@ async fn main() {
 
     let app = Router::new()
         .route("/login", post({
-            let auth_controller = auth_controller.clone(); // Clone `Arc` for closure
-            move |Json(request): Json<LoginRequest>| {
-                let auth_controller = auth_controller.clone(); // Clone again for `async move`
-                async move {
-                    auth_controller.as_ref().Login(axum::Json(request)).await // Use `as_ref()` to access the method instance
-                }
+            let auth_controller = Arc::clone(&auth_controller);
+            move |Json(req): Json<LoginRequest>| {
+                let controller = Arc::clone(&auth_controller); // Cloning here
+                async move { controller.login(Json(req)).await } // Ensuring async is awaited
+            }
+        }))
+        .route("/register", post({
+            let auth_controller = Arc::clone(&auth_controller);
+            move |Json(req): Json<RegisterRequest>| {
+                let controller = Arc::clone(&auth_controller); // Cloning here
+                async move { controller.register(Json(req)).await } // Ensuring async is awaited
             }
         }));
+
     // run our app with hyper, listening globally on port 3000
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
+

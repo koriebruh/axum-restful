@@ -4,17 +4,17 @@ use validator::{Validate, ValidationError};
 #[derive(Serialize, Deserialize, Validate)]
 pub struct RegisterRequest {
     #[validate(
-        length(min = 8, max = 80, message = "Username should be between 8 and 80 characters")
+        length(min = 8, max = 80, message = "should be between 8 and 80 characters")
     )]
     pub username: String,
 
     #[validate(
-        length(min = 8, max = 80, message = "Password should be between 8 and 80 characters")
+        length(min = 8, max = 80, message = "should be between 8 and 80 characters")
     )]
     pub password: String,
 
     #[validate(
-        length(min = 3, max = 20, message = "Email should be between 3 and 20 characters"),
+        length(min = 3, max = 20, message = "should be between 3 and 20 characters"),
         email(message = "Invalid email address")
     )]
     pub email: String,

@@ -22,7 +22,7 @@ impl AuthControllerImpl {
 }
 
 impl AuthController for AuthControllerImpl {
-    async fn Login(&self, Json(request): Json<LoginRequest>) -> Response {
+    async fn login(&self, Json(request): Json<LoginRequest>) -> Response {
         match self.service.login(request).await {
             Ok(message) => {
                 let success_response = WebResponse {
@@ -36,7 +36,7 @@ impl AuthController for AuthControllerImpl {
         }
     }
 
-    async fn Register(&self, Json(request): Json<RegisterRequest>) -> Response {
+    async fn register(&self, Json(request): Json<RegisterRequest>) -> Response {
         match self.service.register(request).await {
             Ok(result)=> {
                 let response = WebResponse {
@@ -50,7 +50,7 @@ impl AuthController for AuthControllerImpl {
         }
     }
 
-    async fn Logout(&self) -> Response {
+    async fn logout(&self) -> Response {
         todo!()
     }
 }

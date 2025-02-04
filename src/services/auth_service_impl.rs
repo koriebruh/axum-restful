@@ -37,7 +37,7 @@ impl AuthService for AuthServiceImpl {
 
         match self.repository.login(new_login).await {
             Ok(true) => Ok("login user success ".to_string()),
-            Ok(false) => Ok("fail login ".to_string()),
+            Ok(false) => Err(ErrCustom::InvalidCredentials),
             Err(e) => Err(e),
         }
     }

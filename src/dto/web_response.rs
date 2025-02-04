@@ -28,7 +28,28 @@ impl IntoResponse for ErrCustom {
             ErrCustom::InvalidCredentials =>{
                 let error_response = WebResponse {
                     status: "error".to_string(),
-                    message: "username or password wrong".to_string(),
+                    message: ErrCustom::InvalidCredentials.to_string(),
+                    data: None,
+                };
+                (StatusCode::BAD_REQUEST, Json(error_response)).into_response()
+            },ErrCustom::UsernameExists =>{
+                let error_response = WebResponse {
+                    status: "error".to_string(),
+                    message: ErrCustom::UsernameExists.to_string(),
+                    data: None,
+                };
+                (StatusCode::BAD_REQUEST, Json(error_response)).into_response()
+            },ErrCustom::EmailExists =>{
+                let error_response = WebResponse {
+                    status: "error".to_string(),
+                    message: ErrCustom::EmailExists.to_string(),
+                    data: None,
+                };
+                (StatusCode::BAD_REQUEST, Json(error_response)).into_response()
+            },ErrCustom::DatabaseError(msg) =>{
+                let error_response = WebResponse {
+                    status: "error".to_string(),
+                    message: msg.to_string(),
                     data: None,
                 };
                 (StatusCode::BAD_REQUEST, Json(error_response)).into_response()
