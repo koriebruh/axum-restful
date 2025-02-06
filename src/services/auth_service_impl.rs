@@ -7,11 +7,12 @@ use crate::utils::errors::ErrCustom;
 use crate::repositories::auth_repository_impl::AuthRepositoryImpl;
 use crate::models::user::User;
 use std::sync::Arc;
+use log::error;
 use validator::Validate;
 
 
 pub struct AuthServiceImpl {
-    repository: Arc<AuthRepositoryImpl>
+    repository: Arc<AuthRepositoryImpl>,
 }
 
 impl AuthServiceImpl {
@@ -43,8 +44,11 @@ impl AuthService for AuthServiceImpl {
     }
 
     async fn register(&self, request: RegisterRequest) -> Result<String, ErrCustom> {
-        if let Err(validation_errors) = request.validate() {
-            return Err(ErrCustom::ValidationError(validation_errors.to_string()));
+        request.validate().map_err(|e| ErrCustom::ValidationError(e.to_string()))?;
+
+        //CHECK APAKAH USER UDAH EXIST
+        if self.repository.exist_kah(request.username.as_str()).await? {
+            return Err(ErrCustom::UsernameExists);
         }
 
         // MAPPING
@@ -57,15 +61,7 @@ impl AuthService for AuthServiceImpl {
             updated_at: None,
         };
 
-        match self.repository.exist_kah(request.username.as_str()).await {
-            Ok(true) => Err(ErrCustom::UsernameExists), // Jika username sudah ada, return error
-            Ok(false) => {
-                match self.repository.create_user(new_user).await { // Tambahkan `.await` di sini
-                    Ok(_) => Ok("login user success".to_string()),
-                    Err(e) => Err(e),
-                }
-            }
-            Err(e) => Err(e),
-        }
+        self.repository.create_user(new_user).await?;
+        Ok(format!("register success"))
     }
 }

@@ -50,7 +50,6 @@ impl AuthRepository for AuthRepositoryImpl {
     // ? maksud nya Jika hasilnya adalah Err(E) (untuk Result) atau None (untuk Option),
     // maka fungsi akan mengembalikan error tersebut (atau None)
     async fn login(&self, user: User) -> Result<bool, ErrCustom> {
-        println!("Attempting to login with username: {}", user.username.clone());
         let execute = sqlx::query(
             "SELECT username, password FROM users WHERE username = ?"
         ).bind(user.username)

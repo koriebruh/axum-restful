@@ -1,6 +1,8 @@
 use std::sync::Arc;
 use axum::{Router, Json};
 use axum::routing::{get, post};
+use log::{info, warn};
+use sqlx::pool;
 use crate::conf::database::get_pool;
 use crate::controllers::auth_controller::AuthController;
 use crate::controllers::auth_controller_impl::AuthControllerImpl;
@@ -10,7 +12,10 @@ use crate::repositories::auth_repository_impl::AuthRepositoryImpl;
 use crate::services::auth_service::AuthService;
 use crate::services::auth_service_impl::AuthServiceImpl;
 
-mod conf { pub mod database; }
+mod conf {
+    pub mod database;
+    pub mod jwt;
+}
 mod models { pub mod user; }
 mod dto {
     pub mod login_request;
@@ -38,14 +43,8 @@ mod utils {
 
 #[tokio::main]
 async fn main() {
-    env_logger::init();
-    let pool = match get_pool().await {
-        Ok(pool) => pool,
-        Err(e) => {
-            eprintln!("Failed to create database pool: {}", e);
-            std::process::exit(1);
-        }
-    };
+    log4rs::init_file("log4rs.yaml", Default::default()).unwrap();
+    let pool = get_pool().await.expect("failed to make connection database");
 
     let auth_repository = Arc::new(AuthRepositoryImpl::new(pool.clone()));
     let auth_service = Arc::new(AuthServiceImpl::new(auth_repository.clone()));
@@ -69,6 +68,35 @@ async fn main() {
 
     // run our app with hyper, listening globally on port 3000
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    info!("This Server Ready");
     axum::serve(listener, app).await.unwrap();
 }
 
+
+#[cfg(test)]
+mod test {
+    use std::thread;
+    use std::time::Duration;
+    use crate::conf::jwt::{gen_jwt, validate_jwt};
+
+    #[test]
+    fn jwt_testing() {
+        let user_name = "korium";
+        let ini_jwt = gen_jwt(user_name).expect("ERORR JWT");
+        println!("TOKEN JWT {:}", &ini_jwt);
+
+        //EXTRACT JWT IF NOT Expired
+        match validate_jwt(&ini_jwt) {
+            Ok(claims) => println!("JWT BERHASIL DIEKSTRAK: {:?}", claims),
+            Err(e) => println!("OH shit got err"),
+        }
+
+        //TEST HARUSNYA ERROR
+        thread::sleep(Duration::from_secs(15));
+        match validate_jwt(&ini_jwt) {
+            Err(e) => println!("Sesuai harapan, token kadaluarsa: {}", e),
+            Ok(_) => println!("ERROR: Seharusnya token sudah kadaluarsa!"),
+        }
+    }
+
+}

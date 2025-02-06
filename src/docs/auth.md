@@ -29,7 +29,7 @@ BAD REQUEST USER
 INTERNAL SERVER ERROR
 {
     "status"  : "error",
-    "message" : internal server error, please try agin later."
+    "message" : "internal server error, please try agin later."
 }  
 ```
 

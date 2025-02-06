@@ -1,0 +1,15 @@
+#UNTUK SETTINGS LOG DI TAMPILKAN DI MANA
+appenders:
+  stdout:
+    kind: console
+  add_file:  # ini nama bebas
+    kind: file
+    path: src/log/application.log
+    append: true
+
+#LEVEL LOGGING DEFAULT, dan akan di tampilkan kemana log nya, jika ingin custom spessifik level info bisa buat loggers:
+root:
+  level: info
+  appenders:
+    - stdout
+    - add_file
