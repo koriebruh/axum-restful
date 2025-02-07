@@ -56,6 +56,12 @@ impl IntoResponse for ErrCustom {
                     message: msg.to_string(),
                 };
                 (StatusCode::BAD_REQUEST, Json(error_response)).into_response()
+            },ErrCustom::JwtError(msg) =>{
+                let error_response = WebResponseNoData {
+                    status: "error".to_string(),
+                    message: msg.to_string(),
+                };
+                (StatusCode::UNAUTHORIZED, Json(error_response)).into_response()
             },
             _ => {
                 let error_response = WebResponseNoData {

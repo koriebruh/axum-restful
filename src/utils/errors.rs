@@ -20,4 +20,7 @@ pub enum ErrCustom {
 
     #[error("Validation error: {0}")]
     ValidationError(String),
+
+    #[error("JWT Error: {0}")]
+    JwtError(#[from] jsonwebtoken::errors::Error),
 }

@@ -1,12 +1,13 @@
 use chrono::{Duration, Utc};
 use jsonwebtoken::{Algorithm, decode, DecodingKey, encode, EncodingKey, Header, Validation};
+use log::info;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
     sub: String, // what u want save, like id_user
     company: String,
-    exp: usize,
+    pub exp: usize,
 }
 const SECRET_KEY: &[u8] = b"my_secret_key";
 const COMPANY: &str = "Korium"; // my company name in future before 2030 and will be big after 2030 add run in blockchain tech
@@ -28,6 +29,8 @@ pub fn gen_jwt(user_id: &str) -> Result<String, jsonwebtoken::errors::Error> {
                        &EncodingKey::from_secret(SECRET_KEY),
     )?;
 
+
+    info!("Successfully generate token for {:}",&user_id);
     Ok(token)
 }
 
@@ -45,7 +48,7 @@ pub fn validate_jwt(token: &str) -> Result<Claims, jsonwebtoken::errors::Error> 
     let claims = decoded.claims;
     let now = Utc::now().timestamp() as usize;
 
-    println!("🔹 SEKARANG: {}, EXPIRED DI: {}", now, claims.exp);
+    info!("🔹 SEKARANG: {}, EXPIRED DI: {}", now, claims.exp);
 
     if now > claims.exp {
         return Err(jsonwebtoken::errors::Error::from(jsonwebtoken::errors::ErrorKind::ExpiredSignature));

@@ -267,6 +267,7 @@ dependencies = [
  "axum-test",
  "chrono",
  "config",
+ "cookie",
  "dotenv",
  "env_logger",
  "hmac",

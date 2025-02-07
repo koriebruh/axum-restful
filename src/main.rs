@@ -21,6 +21,7 @@ mod dto {
     pub mod login_request;
     pub mod register_request;
     pub mod web_response;
+    pub mod login_response;
 }
 mod repositories {
     pub mod auth_repository;
