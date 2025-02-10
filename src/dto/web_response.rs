@@ -62,6 +62,18 @@ impl IntoResponse for ErrCustom {
                     message: msg.to_string(),
                 };
                 (StatusCode::UNAUTHORIZED, Json(error_response)).into_response()
+            },ErrCustom::Unauthorized =>{
+                let error_response = WebResponseNoData {
+                    status: "error".to_string(),
+                    message: ErrCustom::Unauthorized.to_string(),
+                };
+                (StatusCode::UNAUTHORIZED, Json(error_response)).into_response()
+            },ErrCustom::NotProvideToken =>{
+                let error_response = WebResponseNoData {
+                    status: "error".to_string(),
+                    message: ErrCustom::NotProvideToken.to_string(),
+                };
+                (StatusCode::UNAUTHORIZED, Json(error_response)).into_response()
             },
             _ => {
                 let error_response = WebResponseNoData {

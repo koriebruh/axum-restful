@@ -32,7 +32,7 @@ impl AuthController for AuthControllerImpl {
         match self.service.login(request.clone()).await {
             Ok(message) => {
                 // GENERATE JWT
-                let token = gen_jwt(&request.username).unwrap();
+                let token = gen_jwt(&request.username, chrono::Duration::minutes(15)).unwrap();
 
                 //VALIDATION AND SEND TOKEN WITH PAYLOAD,Ambil datanya aja  makanya pake unwrap
                 let claims = validate_jwt(&token).unwrap();
@@ -56,11 +56,13 @@ impl AuthController for AuthControllerImpl {
                     })),
                 };
 
-               let mut response = (StatusCode::OK, Json(success_response)).into_response();
+                let mut response = (StatusCode::OK, Json(success_response)).into_response();
                 response.headers_mut().insert(
                     header::SET_COOKIE,
                     HeaderValue::from_str(&cookie.to_string()).unwrap()
                 );
+                // SET KE CHACHE REDIS
+                
 
                 response
 

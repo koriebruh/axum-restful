@@ -23,4 +23,10 @@ pub enum ErrCustom {
 
     #[error("JWT Error: {0}")]
     JwtError(#[from] jsonwebtoken::errors::Error),
+
+    #[error("Not provide token")]
+    NotProvideToken,
+
+    #[error("invalidate token")]
+    Unauthorized,
 }

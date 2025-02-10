@@ -1,4 +1,4 @@
-use chrono::{Duration, Utc};
+use chrono::{Duration, TimeDelta, Utc};
 use jsonwebtoken::{Algorithm, decode, DecodingKey, encode, EncodingKey, Header, Validation};
 use log::info;
 use serde::{Deserialize, Serialize};
@@ -12,9 +12,9 @@ pub struct Claims {
 const SECRET_KEY: &[u8] = b"my_secret_key";
 const COMPANY: &str = "Korium"; // my company name in future before 2030 and will be big after 2030 add run in blockchain tech
 
-pub fn gen_jwt(user_id: &str) -> Result<String, jsonwebtoken::errors::Error> {
+pub fn gen_jwt(user_id: &str, lifetime : Duration) -> Result<String, jsonwebtoken::errors::Error> {
     let expiration = Utc::now()
-        .checked_add_signed(Duration::seconds(10)) // lifetime token
+        .checked_add_signed(lifetime) // lifetime token
         .expect("valid timestamp")
         .timestamp();
 

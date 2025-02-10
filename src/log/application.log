@@ -21,3 +21,26 @@
 2025-02-07T09:58:27.069024100+07:00 INFO axum_restful - This Server Ready
 2025-02-07T09:58:32.333820200+07:00 INFO axum_restful::conf::jwt - Successfully generate token for koriebruh1
 2025-02-07T09:58:32.335581+07:00 INFO axum_restful::conf::jwt - 🔹 SEKARANG: 1738897112, EXPIRED DI: 1738897122
+2025-02-07T10:08:29.076598700+07:00 INFO axum_restful - This Server Ready
+2025-02-07T10:08:32.762703900+07:00 INFO axum_restful::conf::jwt - Successfully generate token for koriebruh1
+2025-02-07T10:08:32.763209500+07:00 INFO axum_restful::conf::jwt - 🔹 SEKARANG: 1738897712, EXPIRED DI: 1738897722
+2025-02-07T12:48:32.521052600+07:00 INFO axum_restful - This Server Ready
+2025-02-07T12:48:42.424926900+07:00 WARN axum_restful::dto::web_response - Error Response is DatabaseError(Database(MySqlDatabaseError { code: Some("42S02"), number: 1146, message: "Table 'axum_rust.users' doesn't exist" }))
+2025-02-07T12:52:13.382446300+07:00 WARN axum_restful::dto::web_response - Error Response is InvalidCredentials
+2025-02-07T12:52:55.154781600+07:00 INFO axum_restful::conf::jwt - Successfully generate token for koriebruh
+2025-02-07T12:52:55.156061100+07:00 INFO axum_restful::conf::jwt - 🔹 SEKARANG: 1738907575, EXPIRED DI: 1738907585
+2025-02-10T15:13:56.200997200+07:00 INFO axum_restful - This Server Ready
+2025-02-10T15:14:07.111450900+07:00 WARN axum_restful::dto::web_response - Error Response is NotProvideToken
+2025-02-10T15:15:27.553165+07:00 WARN axum_restful::dto::web_response - Error Response is NotProvideToken
+2025-02-10T15:15:44.298746200+07:00 INFO axum_restful::conf::jwt - Successfully generate token for koriebruh
+2025-02-10T15:15:44.300354100+07:00 INFO axum_restful::conf::jwt - 🔹 SEKARANG: 1739175344, EXPIRED DI: 1739175354
+2025-02-10T15:15:59.062804400+07:00 INFO axum_restful::conf::jwt - 🔹 SEKARANG: 1739175359, EXPIRED DI: 1739175354
+2025-02-10T15:15:59.062947700+07:00 WARN axum_restful::dto::web_response - Error Response is Unauthorized
+2025-02-10T15:16:01.369242500+07:00 INFO axum_restful::conf::jwt - 🔹 SEKARANG: 1739175361, EXPIRED DI: 1739175354
+2025-02-10T15:16:01.369603500+07:00 WARN axum_restful::dto::web_response - Error Response is Unauthorized
+2025-02-10T15:16:02.816110700+07:00 INFO axum_restful::conf::jwt - 🔹 SEKARANG: 1739175362, EXPIRED DI: 1739175354
+2025-02-10T15:16:02.816278+07:00 WARN axum_restful::dto::web_response - Error Response is Unauthorized
+2025-02-10T15:18:43.915920+07:00 INFO axum_restful - This Server Ready
+2025-02-10T15:19:00.144591900+07:00 INFO axum_restful::conf::jwt - Successfully generate token for koriebruh
+2025-02-10T15:19:00.145407900+07:00 INFO axum_restful::conf::jwt - 🔹 SEKARANG: 1739175540, EXPIRED DI: 1739176440
+2025-02-10T15:19:09.743648700+07:00 INFO axum_restful::conf::jwt - 🔹 SEKARANG: 1739175549, EXPIRED DI: 1739176440

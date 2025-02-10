@@ -16,3 +16,5 @@ cargo add axum-test
 cargo add anyhow
 
 cargo add jsonwebtoken
+
+cargo add redis --features tokio-comp
